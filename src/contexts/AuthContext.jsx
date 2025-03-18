@@ -3,11 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import Loader from 'src/components/LoadingScreens/CSSLoader';
 import { errorToast } from 'src/components/toasters/toast.js';
 import { clearStore } from "src/store/index.js";
-import { logout as logoutAction, setUser } from '../store/slices/authSlice';
-import { fetchKeyThunk, signinThunk,  } from 'src/store/thunks/authThunks';
-import { decryptObjectValues } from '../utils/encryptionUtil';
+import { setHighPriorityCount, setLowPriorityCount, setMediumPriorityCount } from 'src/store/slices/taskSlice';
+import { fetchKeyThunk, googleSignUpThunk, signinThunk, } from 'src/store/thunks/authThunks';
 import { fetchPriorityCountsThunk } from 'src/store/thunks/taskThunks';
-import { setHighPriorityCount, setMediumPriorityCount, setLowPriorityCount } from 'src/store/slices/taskSlice';
+import { logout as logoutAction, setUser } from '../store/slices/authSlice';
+import { decryptObjectValues } from '../utils/encryptionUtil';
 
 const AuthContext = createContext();
 
@@ -61,6 +61,39 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const googleLogin = async (credentials) => {
+        setIsLoading(true);
+        try {
+            const response = await dispatch(googleSignUpThunk(credentials)).unwrap();
+            console.log('here are the credentials in the authcontext')
+            const { access_token, user } = response.data;
+            if (access_token) {
+                localStorage.setItem('access_token', access_token);
+                const fetchKeyResponse = await dispatch(fetchKeyThunk({})).unwrap();
+                const privateKey = fetchKeyResponse.data.privateKey;
+                localStorage.setItem('privateKey', privateKey);
+                const decryptedUser = decryptObjectValues(user, privateKey);
+                console.log('dispatching the user', decryptedUser);
+                dispatch(setUser(decryptedUser));
+                console.log('User is set')
+                const priorityCounts = await dispatch(fetchPriorityCountsThunk()).unwrap();
+                console.log('priorityCounts areeeeeeeee', priorityCounts);
+                dispatch(setHighPriorityCount(priorityCounts.data.high));
+                dispatch(setLowPriorityCount(priorityCounts.data.low));
+
+                dispatch(setMediumPriorityCount(priorityCounts.data.medium));
+
+
+
+            }
+        } catch (error) {
+            console.log('Something went wrong', error);
+            errorToast(error.message, 'authentication-pages-error');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const logout = async () => {
         // setIsLoading(true);
         // await dispatch(clearTasks());
@@ -79,7 +112,7 @@ export const AuthProvider = ({ children }) => {
         <Loader />
     </div>;
     return (
-        <AuthContext.Provider value={{ isAuthenticated, user, access_token, login, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated, user, access_token, login, logout, googleLogin }}>
             {children}
         </AuthContext.Provider>
     );

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchKeyThunk, forgotPassThunk, signinThunk, signupThunk } from 'src/store/thunks/authThunks';
+import { fetchKeyThunk, forgotPassThunk, googleSignUpThunk, signinThunk, signupThunk } from 'src/store/thunks/authThunks';
 
 
 const authSlice = createSlice({
@@ -46,6 +46,15 @@ const authSlice = createSlice({
                 state.errorMsg = 'Signup failed!';
             })
             .addCase(signinThunk.fulfilled, (state, action) => {
+                console.log('Iam in the signin in thunk slice', action)
+                state.isLoading = false;
+                state.successMsg = 'Signin successful!';
+                state.errorMsg = '';
+                state.access_token = action.payload.data.access_token;
+                state.user = action.payload.data.user;
+                state.isAuthenticated = true;
+            })
+            .addCase(googleSignUpThunk.fulfilled, (state, action) => {
                 console.log('Iam in the signin in thunk slice', action)
                 state.isLoading = false;
                 state.successMsg = 'Signin successful!';

@@ -12,6 +12,10 @@ import CustomBarChart from './subComponents/BarChart';
 // import MuiPieChart from './subComponents/MuiPieChart';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import BottomBar from 'src/components/BottomBar/BottomBar';
+import BottomButtons from "src/components/BottomButtons";
+import PlusIcon from 'src/components/icons/PlusIcon';
+import { useResponsive } from 'src/constants/media_queries';
 import { fetchDashboardData } from "src/store/thunks/dashboardThunk.js";
 
 
@@ -20,12 +24,23 @@ function Dashboard() {
     const dateFormat = useSelector((state) => state.format.dateFormat);
     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const [currentTime, setCurrentTime] = useState(formatLocalDateTime(new Date().toISOString(), userTimeZone, timeFormat, dateFormat));
+    const [open, setOpen] = useState(false);
 
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+    const [filterOpen, setFilterOpen] = useState(false);
+    const handleFilterOpen = () => setFilterOpen(true);
+    const handleFilterClose = () => setFilterOpen(false);
     const user = useSelector(state => state.auth?.user);
     const dispatch = useDispatch();
     const totalCountData = useSelector((state) => state.chartsData?.graphData?.statusGraph);
     const loaded = useSelector((state) => state.chartsData.loaded);
-
+    const {
+        isAdaptableScreen,
+        onWholeScreen,
+        isMicroScreen,
+    } = useResponsive();
     console.log('here is the total count', totalCountData)
 
     const formatUserName = () => {
@@ -119,6 +134,15 @@ function Dashboard() {
                     </div>
                 </div>
             </div>
+            <BottomButtons handleOpen={handleOpen} handleFilterOpen={handleFilterOpen} />
+            {(!isAdaptableScreen && !isMicroScreen) && <BottomBar handleOpen={handleOpen} handleFilterOpen={handleFilterOpen} />}
+
+            {(isMicroScreen && !isAdaptableScreen) && (<div className="circle-2">
+                <div style={{ width: '100%', borderRadius: '50px', display: 'flex', marginTop: '24px', justifyContent: 'center' }}
+                    onClick={handleOpen}>
+                    <PlusIcon color='white' width='17' height='17' />
+                </div>
+            </div>)}
         </MainDiv>
     )
 }

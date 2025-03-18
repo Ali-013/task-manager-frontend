@@ -23,6 +23,7 @@ import HighTasks from './pages/tasks/HighTasks';
 import LowTasks from './pages/tasks/LowTasks';
 import MediumTasks from './pages/tasks/MediumTasks';
 import { persistor } from './store/index';
+import {Examination} from 'src/components/examination/examination';
 
 
 function App() {
@@ -75,7 +76,7 @@ function App() {
                     <Route path="/tasks_low" element={<RouteGuard element={LowTasks} />} />
                     <Route path="/calendar" element={<RouteGuard element={CalendarComponent} />} />
                     <Route path="/settings" element={<RouteGuard element={Settings} />} />
-                
+                    <Route path="/examination"  element={<RouteGuard element={Examination} />} />
                     <Route path="/notes/:id" element={<RouteGuard element={UpdateNote} />} />
                 </Routes>
             </AuthProvider>

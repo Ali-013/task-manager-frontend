@@ -10,55 +10,23 @@ import MainDiv from "src/components/maindiv/maindiv";
 import { capitalizeFirstLetter, formatLocalDateTime } from 'src/utils/basicUtils';
 import CustomBarChart from './subComponents/BarChart';
 // import MuiPieChart from './subComponents/MuiPieChart';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchDashboardData } from "src/store/thunks/dashboardThunk.js";
 
 
 function Dashboard() {
+    const timeFormat = useSelector((state) => state.format.timeFormat)
+    const dateFormat = useSelector((state) => state.format.dateFormat);
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const [currentTime, setCurrentTime] = useState(formatLocalDateTime(new Date().toISOString(), userTimeZone, timeFormat, dateFormat));
+
     const user = useSelector(state => state.auth?.user);
-    const highPriorityTasks = useSelector((state) => state.highPriorityTasks.highPriorityTasks);
-    const mediumPriorityTasks = useSelector((state) => state.mediumPriorityTasks.mediumPriorityTasks);
-    const lowPriorityTasks = useSelector((state) => state.lowPriorityTasks.lowPriorityTasks);
-    const tasks = useSelector(state => state.tasks.tasks);
     const dispatch = useDispatch();
     const totalCountData = useSelector((state) => state.chartsData?.graphData?.statusGraph);
     const loaded = useSelector((state) => state.chartsData.loaded);
 
     console.log('here is the total count', totalCountData)
-    // const priorityTasksInStatus = (status, priority) => {
-    //     const statusHighTasks = tasks.filter(task => task.status == status && task.priority == priority);
-    //     const statusHighTasksCount = statusHighTasks.length;
-    //     const statusMediumTasks = mediumPriorityTasks.filter(task => task.status == status);
-    //     const statusMediumTasksCount = statusMediumTasks.length;
-    //     const statusLowTasks = lowPriorityTasks.filter(task => task.status == status);
-    //     const statusLowTasksCount = statusLowTasks.length;
-    //     return ({
-    //         statusHighTasksCount,
-    //         statusLowTasksCount,
-    //         statusMediumTasksCount
-    //     })
-    // }
-
-    // const prioritiesInNotStarted = priorityTasksInStatus('NOT_STARTED');
-    // const highNotStartedCount = prioritiesInNotStarted.statusHighTasksCount;
-    // const mediumNotStartedCount = prioritiesInNotStarted.statusMediumTasksCount;
-    // const lowNotStartedCount = prioritiesInNotStarted.statusLowTasksCount;
-    // const prioritiesInPending = priorityTasksInStatus('PENDING');
-    // const highPendingCount = prioritiesInPending.statusHighTasksCount;
-    // const mediumPendingCount = prioritiesInPending.statusMediumTasksCount;
-    // const lowPendingCount = prioritiesInPending.statusLowTasksCount;
-    // const prioritiesInProgressing = priorityTasksInStatus('IN_PROGRESS');
-    // const highProgressingCount = prioritiesInProgressing.statusHighTasksCount;
-    // const mediumProgressingCount = prioritiesInProgressing.statusMediumTasksCount;
-    // const lowProgressingCount = prioritiesInProgressing.statusLowTasksCount;
-    // const prioritiesInCompleted = priorityTasksInStatus('COMPLETED');
-    // const highCompletedCount = prioritiesInCompleted.statusHighTasksCount;
-    // const mediumCompletedCount = prioritiesInCompleted.statusMediumTasksCount;
-    // const lowCompletedCount = prioritiesInCompleted.statusLowTasksCount;
-
-
-
 
     const formatUserName = () => {
         if (user) {
@@ -73,9 +41,7 @@ function Dashboard() {
         return '';
     }
 
-    const timeFormat = useSelector((state) => state.format.timeFormat)
-    const dateFormat = useSelector((state) => state.format.dateFormat);
-    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
 
     useEffect(() => {
         // Fetch task counts on component mount
@@ -83,13 +49,20 @@ function Dashboard() {
             dispatch(fetchDashboardData());
         }
     }, [dispatch]);
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentTime(formatLocalDateTime(new Date().toISOString(), userTimeZone, timeFormat, dateFormat));
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
     return (
         <MainDiv>
             <div style={{width: '100%'}}>
                 <div className="dashboard-header">
                     <div className="dashboard-header-text">
                         <div className="dashboard-welcome">Welcome {formatUserName()}!</div>
-                        <div className="dashboard-date">{formatLocalDateTime(new Date().toISOString(), userTimeZone, timeFormat, dateFormat)}</div>
+                        <div className="dashboard-date">{currentTime}</div>
                     </div>
                 </div>
                 <div className = 'status-boxes-div'>

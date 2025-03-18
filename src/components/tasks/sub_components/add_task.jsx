@@ -1,4 +1,4 @@
-import { Box, FormControl, MenuItem, Select, TextareaAutosize, TextField } from '@mui/material';
+import { Box, FormControl, MenuItem, Select, TextareaAutosize } from '@mui/material';
 import Modal from '@mui/material/Modal';
 import { styled } from "@mui/system";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -21,31 +21,6 @@ import { encryptArrayValues, encryptObjectValues } from "src/utils/encryptionUti
 
 import { fetchDashboardData } from "src/store/thunks/dashboardThunk.js";
 
-
-
-const CssInputField = styled((props) => <TextField {...props} />)(({ theme }) => ({
-    '& .MuiInputBase-input': {
-        border: 'none',
-    },
-    '& .MuiOutlinedInput-root': {
-
-        '&:hover fieldset': {
-            border: '1px solid var(--primary-background-color)',
-        },
-        '&.Mui-focused fieldset': {
-            border: '1px solid var(--primary-background-color)',
-        },
-        '& .MuiOutlinedInput-notchedOutline': {
-            border: '1px solid #D1D5DB',
-        },
-        height: '40px',
-        borderRadius: '8px',
-        padding: '4px',
-        '& input': {
-            padding: '4px',
-        },
-    },
-}));
 const CssDateField = styled((props) => <MobileDateTimePicker {...props} />)(({ theme }) => ({
     '& .MuiInputBase-root': {
         borderRadius: '8px',

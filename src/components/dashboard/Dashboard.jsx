@@ -14,7 +14,6 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import BottomBar from 'src/components/BottomBar/BottomBar';
 import BottomButtons from "src/components/BottomButtons";
-import PlusIcon from 'src/components/icons/PlusIcon';
 import { useResponsive } from 'src/constants/media_queries';
 import { fetchDashboardData } from "src/store/thunks/dashboardThunk.js";
 
@@ -38,6 +37,8 @@ function Dashboard() {
     const loaded = useSelector((state) => state.chartsData.loaded);
     const {
         isAdaptableScreen,
+        isSmallScreen,
+        isSmallerScreen,
         onWholeScreen,
         isMicroScreen,
     } = useResponsive();
@@ -73,7 +74,7 @@ function Dashboard() {
     }, []);
     return (
         <MainDiv>
-            <div style={{width: '100%'}}>
+            <div style={{ width: '100%' }}>
                 <div className="dashboard-header">
                     <div className="dashboard-header-text">
                         <div className="dashboard-welcome">Welcome {formatUserName()}!</div>
@@ -86,8 +87,8 @@ function Dashboard() {
                     <StatusBox img={greenTick} statusCount={totalCountData['COMPLETED']} statusName='Completed' />
                     <StatusBox img={total} statusCount={totalCountData['NOT_STARTED']} statusName='Not Started' />
                 </div>
-                <div className = 'chart-and-pinned-div'>
-                    <div className='bar-chart-div'>
+                <div className='chart-and-pinned-div' style={{ display: 'flex', flexDirection: isSmallScreen ? 'column' : 'row' }}>
+                    <div className='bar-chart-div' style={{ width: isSmallScreen ? '100%' : 680, borderRadius: isSmallScreen ? '0px' : '12px' }}>
                         <div style ={{
                             fontFamily: 'var(--primary-font-family)',
                             color: 'var(--secondary-font-color)',
@@ -104,13 +105,14 @@ function Dashboard() {
                            
                         </div>
                     </div>
-                    <div className="pie-chart-div">
+                    <div className="pie-chart-div" style={{ width: isSmallScreen ? '100%' : 403, borderRadius: isSmallScreen ? '0px' : '12px' }}>
                     <div style ={{
                             fontFamily: 'var(--primary-font-family)',
                             color: 'var(--secondary-font-color)',
+
                             fontSize: '22px',
                             fontWeight: '600',
-                            marginLeft: '11px'
+                            marginLeft: '11px',
                         }}>
                         Priorities by Status
                         </div>
@@ -136,13 +138,6 @@ function Dashboard() {
             </div>
             <BottomButtons handleOpen={handleOpen} handleFilterOpen={handleFilterOpen} />
             {(!isAdaptableScreen && !isMicroScreen) && <BottomBar handleOpen={handleOpen} handleFilterOpen={handleFilterOpen} />}
-
-            {(isMicroScreen && !isAdaptableScreen) && (<div className="circle-2">
-                <div style={{ width: '100%', borderRadius: '50px', display: 'flex', marginTop: '24px', justifyContent: 'center' }}
-                    onClick={handleOpen}>
-                    <PlusIcon color='white' width='17' height='17' />
-                </div>
-            </div>)}
         </MainDiv>
     )
 }

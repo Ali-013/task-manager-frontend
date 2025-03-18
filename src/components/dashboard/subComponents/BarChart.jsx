@@ -1,6 +1,7 @@
 import { Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from 'recharts';
 
 import { useSelector } from 'react-redux';
+import { useResponsive } from 'src/constants/media_queries';
 
 
 
@@ -20,7 +21,11 @@ const CustomBarChart = ({
 }) => {
   // const graphData = useSelector((state) => state.chartsData);
   const data = useSelector((state) => state.chartsData?.graphData?.barGraph?.taskCounts);
-
+  const {
+    isSmallScreen,
+    isSmallerScreen,
+    isMicroScreen,
+  } = useResponsive();
   // [
   //   { day: 'Mon', High: 0, Medium: 0, Low: 0 },
   //   { day: 'Tue', High: 0, Medium: 0, Low: 0 },
@@ -46,7 +51,7 @@ const CustomBarChart = ({
   };
 
   return (
-    <BarChart width={630} height={350} data={data}>
+    <BarChart width={isSmallScreen ? 350 : isSmallerScreen ? 300 : isMicroScreen ? 250 : 650} height={350} data={data}>
       <XAxis dataKey="day" tick={{ style: { fontFamily: 'var(--secondary-font-family)' } }} />
       <YAxis ticks={[0, 2, 4, 6, 8, 10, 12, 14]} domain={[0, 14]} tick={{ style: { fontFamily: 'var(--secondary-font-family)' } }} />
       <Tooltip />

@@ -1,4 +1,11 @@
-const StatusBox = ({img, statusCount, statusName }) => {
+import { useResponsive } from 'src/constants/media_queries';
+
+const StatusBox = ({ img, statusCount, statusName }) => {
+    const {
+        isSmallScreen,
+        onWholeScreen,
+        isMicroScreen,
+    } = useResponsive();
     return (
         <div style={
             {display: 'flex', 
@@ -6,7 +13,7 @@ const StatusBox = ({img, statusCount, statusName }) => {
             gap: '15px', 
             justifyContent: 'center', 
             alignItems: 'center',
-            height: '140px',
+                height: isSmallScreen ? '100px' : '140px',
             width: '254px',
             border: '1px solid var(--light-border-color)',
             borderRadius: '12px',
@@ -18,20 +25,20 @@ const StatusBox = ({img, statusCount, statusName }) => {
                 <div style={{
                     fontFamily: 'var(--primary-font-family)',
                     fontWeight: '600',
-                    fontSize: '24px',
+                fontSize: isSmallScreen ? '18px' : '24px',
                     color: 'var(--secondary-font-color)'
 
                 }}>
                     {statusCount}
                 </div>
-                <div style={{
+            {!isSmallScreen && <div style={{
                     fontWeight: '500',
                     fontFamily: 'var(--primary-font-family)',
                     fontSize: '20px',
                     color: 'var(--quaternary-font-color)'
                 }}>
                     {statusName}
-                </div>
+            </div>}
         </div>
     )
 }

@@ -40,6 +40,7 @@ body::-webkit-scrollbar {
 	--modal-border-color: #C1C7D0;
 	--low-font-color: #1FDE43;
 	--high-font-color: #F87171;
+	--pending-font-color: #ee0b0b;
 	--medium-font-color: #F59E0B;
 	--inprogress-font-color: #F59E0B;
 	--light-border-color: #E5E7EB;

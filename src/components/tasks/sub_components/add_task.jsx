@@ -77,32 +77,12 @@ const CssSelectField = styled((props) => <Select {...props} />)(({ theme }) => (
 
 
 
-const AddTask = ({ open, handleClose, getAllTasks, debouncedGetAllTasks, limit, taskDetailsToEdit, taskEdit, handleTaskEdit, setTaskDetailsToEdit, setSpinner }) => {
+const AddTask = ({ open, handleClose, taskDetailsToEdit, taskEdit, setTaskDetailsToEdit, setSpinner }) => {
     const {
-        isAdaptableScreen,
-        onWholeScreen,
         isMicroScreen,
     } = useResponsive();
 
-    const MyComponent = styled('div')({
-        position: 'relative',
-        height: '600px',
-        width: isMicroScreen ? '350px' : '550px',
-        top: '50%',
-        left: isMicroScreen ? '50%' : '52%',
-        transform: 'translate(-50%, -50%)',
-        borderRadius: '10px',
-        backgroundColor: 'var(--neutral-background-color)',
-        border: '1px solid var(--modal-border-color)',
-        opacity: '1',
-        padding: '15px',
-    });
-
     const tasks = useSelector(state => state.tasks.tasks);
-
-    const handleTaskEditFalse = () => {
-        handleTaskEdit();
-    }
     const [taskDetails, setTaskDetails] = useState({
         taskTitle: '',
         dueDate: dayjs(),
@@ -110,7 +90,6 @@ const AddTask = ({ open, handleClose, getAllTasks, debouncedGetAllTasks, limit, 
         status: 'NOT_STARTED',
         taskDescription: ''
     });
-    const accentColor = useSelector((state) => state.appearance.color);
     const [hovered, setHovered] = useState(false);
 
     const handleMouseEnter = () => {
@@ -196,16 +175,13 @@ const AddTask = ({ open, handleClose, getAllTasks, debouncedGetAllTasks, limit, 
     const handleCreateClick = async () => {
         try {
             handleClose();
-            // taskEdit && handleReverseTaskEdit();
             setSpinner(true);
             const splitDesc = taskEdit ? taskDetailsToEdit.taskDescription.match(/.{1,32}/g) : taskDetails.taskDescription.match(/.{1,32}/g);
             const encryptedDesc = encryptArrayValues(splitDesc);
             const forEncryption = {
                 taskTitle: taskEdit ? taskDetailsToEdit.taskTitle : taskDetails.taskTitle,
-                // taskDescription: taskDetails.taskDescription
             };
             const encryptedTaskDetails = encryptObjectValues(forEncryption);
-            // const {id, ...taskDetailsToEditMinusId} = taskDetailsToEdit;
 
             const updatedTaskDetails = taskEdit ? {
                 ...taskDetailsToEdit,
@@ -219,11 +195,8 @@ const AddTask = ({ open, handleClose, getAllTasks, debouncedGetAllTasks, limit, 
                 dueDate: convertToUTC(taskDetails.dueDate)
             };
 
-            console.log('updated-task-details-------------------> ', updatedTaskDetails);
-
             const thunkToDispatch = taskEdit ? updateTaskThunk({ _id, updatedTaskDetails }) : createTaskThunk(updatedTaskDetails);
             const response = await dispatch(thunkToDispatch).unwrap();
-            console.log('response in the AddTask component is/////////////', response.data);
             if (response.status === 201 || response.status === 200) {
                 successToast(response.message, 'task-created');
                 resetTaskDetails();
@@ -313,7 +286,7 @@ const AddTask = ({ open, handleClose, getAllTasks, debouncedGetAllTasks, limit, 
     return (
         <Modal
             open={open}
-            onClose={handleClose} // Ensure the modal can be closed by clicking outside
+            onClose={handleClose}
         >
             <div className='add-task-div' style={{ width: isMicroScreen ? '350px' : '550px', left: isMicroScreen ? '50%' : '52%', }}>
                 <div>

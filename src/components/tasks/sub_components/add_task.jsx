@@ -19,6 +19,7 @@ import createTaskThunk from 'src/store/thunks/create_task_thunk';
 import { fetchPriorityCountsThunk, updateTaskThunk } from 'src/store/thunks/taskThunks';
 import { encryptArrayValues, encryptObjectValues } from "src/utils/encryptionUtil";
 
+import { fetchDashboardData } from "src/store/thunks/dashboardThunk.js";
 
 
 
@@ -286,7 +287,8 @@ const AddTask = ({ open, handleClose, getAllTasks, debouncedGetAllTasks, limit, 
                             break;
                     }
                 } else if (!taskEdit) {
-                    dispatch(addTask(addedTask));
+                    dispatch(addTask(addedTask));   
+
                     if (addedTask.priority == 'MEDIUM') {
                         dispatch(addMediumPriorityTasks(addedTask));
                         dispatch(setMediumPriorityMetaData({
@@ -311,9 +313,9 @@ const AddTask = ({ open, handleClose, getAllTasks, debouncedGetAllTasks, limit, 
                 const priorityCounts = await dispatch(fetchPriorityCountsThunk()).unwrap();
                 dispatch(setHighPriorityCount(priorityCounts.data.high));
                 dispatch(setLowPriorityCount(priorityCounts.data.low));
-                
                 dispatch(setMediumPriorityCount(priorityCounts.data.medium));
                 setSpinner(false);
+                dispatch(fetchDashboardData());
             } else {
                 errorToast('Something went wrong', 'authentication-pages-error');
                 resetTaskDetails();

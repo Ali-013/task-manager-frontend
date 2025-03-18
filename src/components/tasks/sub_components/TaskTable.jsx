@@ -45,6 +45,7 @@ import {
   setMetaData,
   setTasks,
 } from "src/store/slices/taskSlice";
+import { fetchDashboardData } from "src/store/thunks/dashboardThunk.js";
 import {
   deleteTaskThunk,
   fetchPriorityCountsThunk,
@@ -57,6 +58,7 @@ import {
 import { decryptSingleValues } from "src/utils/encryptionUtil";
 import { errorToast, successToast } from "../../toasters/toast";
 import CustomPagination from "./CustomPagination";
+
 
 const calculateCellWidth = () => {
   const containerWidth =
@@ -425,6 +427,7 @@ const TaskTable = ({
           await dispatch(setMediumPriorityMetaDecri());
           await dispatch(setMediumPriorityCount(priorityCounts.data.medium));
         }
+        dispatch(fetchDashboardData());
         successToast(response.message, "task-deleted");
       }
     } catch (err) {

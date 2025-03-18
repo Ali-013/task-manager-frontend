@@ -6,6 +6,7 @@ export const fetchDashboardData = createAsyncThunk(
     'taskCounts/fetchTaskCounts',
     async (_, thunkAPI) => {
         try {
+            console.log("Fetching dashboard data")
             const response = await APIS.get(`/task/weekly/counts`, {
                 headers: {
                     'Content-Type': 'application/json',

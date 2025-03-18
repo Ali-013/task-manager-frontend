@@ -10,10 +10,16 @@ const graphDataSlice = createSlice({
 
             },
             pieGraph: {
-
+                PENDING: { HIGH: 0, MEDIUM: 0, LOW: 0 },
+                IN_PROGRESS: { HIGH: 0, MEDIUM: 0, LOW: 0 },
+                COMPLETED: { HIGH: 0, MEDIUM: 0, LOW: 0 },
+                NOT_STARTED: { HIGH: 0, MEDIUM: 0, LOW: 0 }
             },
             statusGraph: {
-
+                PENDING: 0,
+                IN_PROGRESS: 0,
+                COMPLETED: 0,
+                NOT_STARTED: 0
             }
         },
         status: 'idle',
@@ -23,9 +29,36 @@ const graphDataSlice = createSlice({
         error: null,
         loaded: false,
     },
+    // reducers: {
+    //     setGraphValue: (state, action) => {
+    //         state.value = action.payload;
+    //     },
+    // },
     reducers: {
         setGraphValue: (state, action) => {
             state.value = action.payload;
+        },
+
+        addTaskToGraph: (state, action) => {
+            const { status, priority } = action.payload;
+            if (state.graphData.pieGraph[status]) {
+                state.graphData.pieGraph[status][priority]++;
+            }
+            if (state.graphData.statusGraph[status] !== undefined) {
+                state.graphData.statusGraph[status]++;
+            }
+        },
+        updateTaskInGraph: (state, action) => {
+            const { prevStatus, prevPriority, newStatus, newPriority } = action.payload;
+            if (prevStatus === newStatus && prevPriority !== newPriority) {
+                state.graphData.pieGraph[prevStatus][prevPriority]--;
+            }
+            if (prevStatus !== newStatus && newStatus !== undefined) {
+                state.graphData.pieGraph[prevStatus][prevPriority]--;
+                state.graphData.pieGraph[newStatus][newPriority]++;
+                state.graphData.statusGraph[prevStatus]--;
+                state.graphData.statusGraph[newStatus]++;
+            }
         },
     },
     extraReducers: (builder) => {
@@ -67,5 +100,5 @@ const graphDataSlice = createSlice({
     },
 });
 
-export const { setGraphValue } = graphDataSlice.actions;
+export const { setGraphValue, updateTaskInGraph, addTaskToGraph } = graphDataSlice.actions;
 export const graphDataReducer = graphDataSlice.reducer;

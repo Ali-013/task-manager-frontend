@@ -19,7 +19,7 @@ const UpdateNote = () => {
 
     return (
         <MainDiv>
-            <div style={{marginLeft: '20px', overflow: 'hidden', height: '100vh',  width: '98%'}}>
+            <div style={{marginLeft: '20px', overflowY: 'auto', width: '98%'}}>
                 <CreateNotes
                     noteDetails={details}
                     setNoteDetails={setDetails}
